@@ -33,6 +33,8 @@ namespace FoodBot.Model
         public PizzaCheese Cheese { get; set; }
 
         [Optional]
+        [Template(TemplateUsage.NoPreference, "None")]
+        [Prompt("What kind of {&} would you like? {||}", ChoiceFormat = "{1}")]
         public List<PizzaTopping> Toppings { get; set; }
 
         public override string ToString()

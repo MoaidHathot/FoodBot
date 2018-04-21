@@ -19,11 +19,31 @@ namespace FoodBot.Dialogs
         {
             var activity = await result as Activity;
 
-            // calculate something for us to return
-            int length = (activity.Text ?? string.Empty).Length;
+            var text = activity.Text;
 
-            // return our reply to the user
-            await context.PostAsync($"You sent {activity.Text} which was {length} characters");
+            if (text.Equals("Where are we", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var reply = activity.CreateReply();
+
+                reply.Attachments.Add(new Attachment()
+                {
+                    ContentUrl = "https://global.azurebootcamp.net/wp-content/uploads/2014/11/logo-2018-500x444-300x266.png",
+                    ContentType = "image/png",
+                    Name = "AzureBootcamp 2018"
+                });
+
+                await context.PostAsync(reply);
+            }
+            else
+            {
+
+                // calculate something for us to return
+                int length = (activity.Text ?? string.Empty).Length;
+
+                // return our reply to the user
+                await context.PostAsync($"You sent {activity.Text} which was {length} characters");
+            }
+
 
             context.Wait(MessageReceivedAsync);
         }

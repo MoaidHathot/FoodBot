@@ -1,4 +1,6 @@
-﻿namespace FoodBot.Dialogs
+﻿using System.Web.Http.Controllers;
+
+namespace FoodBot.Dialogs
 {
     using System;
     using System.Collections.Generic;
@@ -29,14 +31,42 @@
         {
             var message = await result;
 
-            PromptDialog.Choice<string>(
-                context,
-                this.DisplaySelectedCard,
-                this.options,
-                "What card would like to test?",
-                "Ooops, what you wrote is not a valid option, please try again",
-                3,
-                PromptStyle.PerLine);
+            if (message.Text.Equals("Suggestion", StringComparison.InvariantCultureIgnoreCase))
+            {
+                await SendSuggestions(context, (Activity)message);
+            }
+            else
+            {
+                PromptDialog.Choice<string>(
+                    context,
+                    this.DisplaySelectedCard,
+                    this.options,
+                    "What card would like to test?",
+                    "Ooops, what you wrote is not a valid option, please try again",
+                    3,
+                    PromptStyle.PerLine);
+            }
+        }
+
+        private async Task SendSuggestions(IDialogContext context, Activity activity)
+        {
+            var reply = activity.CreateReply("I have colors in mind, but need your help to choose the best one.");
+            reply.Type = ActivityTypes.Message;
+            reply.TextFormat = TextFormatTypes.Plain;
+
+            reply.SuggestedActions = new SuggestedActions()
+            {
+                Actions = new List<CardAction>()
+                {
+                    new CardAction() {Title = "Blue", Type = ActionTypes.ImBack, Value = "Blue"},
+                    new CardAction() {Title = "Red", Type = ActionTypes.ImBack, Value = "Red"},
+                    new CardAction() {Title = "Green", Type = ActionTypes.ImBack, Value = "Green"}
+                }
+            };
+
+            await context.PostAsync(reply);
+
+            context.Wait(this.MessageReceivedAsync);
         }
 
         public async Task DisplaySelectedCard(IDialogContext context, IAwaitable<string> result)

@@ -19,17 +19,18 @@ namespace FoodBot
         {
             if (activity.Type == ActivityTypes.Message)
             {
-                await Conversation.SendAsync(activity, () => new CardsDialog());
+                await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
+                //await Conversation.SendAsync(activity, () => new LuisDialog<object>());
             }
             else
             {
-                HandleSystemMessage(activity);
+                await HandleSystemMessage(activity);
             }
             var response = Request.CreateResponse(HttpStatusCode.OK);
             return response;
         }
 
-        private Activity HandleSystemMessage(Activity message)
+        private async Task HandleSystemMessage(Activity message)
         {
             if (message.Type == ActivityTypes.DeleteUserData)
             {
@@ -41,6 +42,14 @@ namespace FoodBot
                 // Handle conversation state changes, like members being added and removed
                 // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
                 // Not available in all channels
+
+                //if (message.MembersAdded.Any(account => account.Id == message.ReplyToId))
+                //{
+                //    var connector = new ConnectorClient(new Uri(message.ServiceUrl));
+                //    var reply = message.CreateReply("Welcome to FoodBot.");
+
+                //    await connector.Conversations.SendToConversationAsync(reply);
+                //}
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)
             {
@@ -54,8 +63,6 @@ namespace FoodBot
             else if (message.Type == ActivityTypes.Ping)
             {
             }
-
-            return null;
         }
     }
 }

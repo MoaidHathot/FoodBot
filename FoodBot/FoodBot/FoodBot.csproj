@@ -124,13 +124,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Dialogs\ByeScorable.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
-    <Compile Include="Dialogs\CardsDialog.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
+    <Compile Include="Dialogs\HelpDialog.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="GlobalMessageHandlersBotModule.cs" />
+    <Compile Include="Dialogs\LuisRootDialog.cs" />
+    <Compile Include="Model\Beverage.cs" />
+    <Compile Include="Model\Hamburger.cs" />
+    <Compile Include="Model\IOrderItem.cs" />
+    <Compile Include="Model\Order.cs" />
+    <Compile Include="Model\Pizza.cs" />
+    <Compile Include="Dialogs\OrderDialog.cs" />
+    <Compile Include="OrderItemConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\ResturantItem.cs" />
+    <Compile Include="Service\ResturantItemType.cs" />
+    <Compile Include="Service\ResturantService.cs" />
+    <Compile Include="Dialogs\HelpScorable.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

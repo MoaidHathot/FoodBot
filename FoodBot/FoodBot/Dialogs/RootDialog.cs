@@ -36,26 +36,33 @@ namespace FoodBot.Dialogs
                 context.Done(true);
             }
 
-            //if (Regex.IsMatch(message.Text, "^(hi|hey|hello|shalom|Hola).*", RegexOptions.IgnoreCase))
-            {
-                await context.PostAsync("Shalom!");
-                if (TryGetLastOrder(context, out Order order))
-                {
-                    PromptDialog.Confirm(context, ConfirmReorderLastOrderAsync, $"Would you like to reorder the last order? {order}");
-                    return;
-                }
+            await NotifyTyping((Activity) message);
 
-                await context.PostAsync("How can I help you?");
+            await context.PostAsync("Shalom!");
+            if (TryGetLastOrder(context, out Order order))
+            {
+                PromptDialog.Confirm(context, ConfirmReorderLastOrderAsync, $"Would you like to reorder the last order? {order}");
+                return;
             }
 
+            await context.PostAsync("How can I help you?");
+            
+
             context.Wait(MessageReceivedAsync);
+        }
+
+        private async Task NotifyTyping(Activity activity)
+        {
+            var connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+            Activity isTypingReply = activity.CreateReply();
+            isTypingReply.Type = ActivityTypes.Typing;
+            await connector.Conversations.ReplyToActivityAsync(isTypingReply);
         }
 
         private async Task ConfirmReorderLastOrderAsync(IDialogContext context, IAwaitable<bool> isConfirmed)
         {
             if (await isConfirmed)
             {
-                //context.UserData.TryGetValue(LastOrderUserStorageKey, out Order lastOrder);
                 TryGetLastOrder(context, out Order lastOrder);
                 context.Call(new OrderDialog(lastOrder), OrderDoneAsync);
             }
@@ -170,6 +177,8 @@ namespace FoodBot.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
+
+            await NotifyTyping((Activity)message);
 
             if (Regex.IsMatch(message.Text, ".*order.*", RegexOptions.IgnoreCase))
             {
